@@ -108,6 +108,8 @@ export default function Home() {
     var rprecio = parseFloat(valorDpto);
     var rinicial = parseFloat(cuotaInicial);
     var rprestamo = parseFloat(prestamo);
+    console.log(rprestamo);
+    console.log(rprestamo/2);
     var ranios = parseFloat(aniosPagar);
     var rcuotas = parseFloat(numeroCuotas);
     var rtasa = parseFloat(tasaInteres);
@@ -173,7 +175,7 @@ export default function Home() {
         factor_cuota = 1 / (suma_especiales + suma_normal);
         cuota = rprestamo * factor_cuota;
         cuota_especial = (rprestamo * factor_cuota) * 2;
-        console.log("4" + cuota);
+        console.log("4 " + cuota);
       }
   
       // Calcular "Capital pendiente", "Amortización", "Pago de intereses"
@@ -210,14 +212,13 @@ export default function Home() {
         cuotaMensual: cuota.toFixed(2),
       });
 
-      console.log(cuotasData);
+      console.log(cuotasData[j]);
       
     }
   
     // Guardar los resultados en el estado
     setFechasCuotas(cuotasData);
   }
-adddd
   //---------------------------------FORMULAS---------------------------------------//
   return (
     <div
@@ -404,7 +405,12 @@ adddd
         </button>
 
         {showGrid && (
-          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+          <table 
+          style={{ 
+            width: "100%", 
+            borderCollapse: "collapse", 
+            marginTop: "20px" 
+            }}>
             <thead>
               <tr>
                 {headTable.map((header) => (
