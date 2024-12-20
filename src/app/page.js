@@ -28,7 +28,6 @@ export default function Home() {
     "CUOTA MENSUAL",
   ];
   const fechaActual = new Date();
-  //const 
   const dia = String(fechaActual.getDate()).padStart(2, "0");
   const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
   const anio = fechaActual.getFullYear();
@@ -108,8 +107,6 @@ export default function Home() {
     var rprecio = parseFloat(valorDpto);
     var rinicial = parseFloat(cuotaInicial);
     var rprestamo = parseFloat(prestamo);
-    console.log(rprestamo);
-    console.log(rprestamo/2);
     var ranios = parseFloat(aniosPagar);
     var rcuotas = parseFloat(numeroCuotas);
     var rtasa = parseFloat(tasaInteres);
@@ -122,7 +119,7 @@ export default function Home() {
     var suma_normal = 0;
     var factor_cuota = 0;
     var factor_actualizacion_normal = 0;
-    var dateFrom = moment().add(0, 'months').endOf('month').format('YYYY-MM-DD');
+    var dateFrom =  moment('2020-04-30').endOf('month').format('YYYY-MM-DD');
     var desde = moment(dateFrom);
     var interes = 0;
     var amort = 0;
@@ -131,7 +128,6 @@ export default function Home() {
     var cuota_especial = 0;
     var factor_actualizacion_esp = 0;
     var saldo = rprestamo;
-    var factor_actualizacion_especial;
   
     var fecha_desembolso = desde;
     var dia_actual = desde.add(1, 'months');
@@ -141,11 +137,11 @@ export default function Home() {
     // Calcular fechas de cuotas
     for (var i = 0; i < ranios * 12; i++) {
       fecha = dia_actual.endOf('month').format('YYYY-MM-DD');
-      if (moment(fecha, 'YYYY/MM/DD').date() == 31) {
-        fecha_ = moment(fecha).subtract(1, 'days').format('YYYY/MM/DD');
-        fechas.push(moment(fecha_).format('YYYY/MM/DD'));
+      if (moment(fecha, 'YYYY-MM-DD').date() == 31) {
+        fecha_ = moment(fecha).subtract(1, 'days').format('YYYY-MM-DD');
+        fechas.push(moment(fecha_).format('YYYY-MM-DD'));
       } else {
-        fechas.push(moment(fecha).format('YYYY/MM/DD'));
+        fechas.push(moment(fecha).format('YYYY-MM-DD'));
       }
       dia_actual.add(1, 'months');
     }
@@ -161,9 +157,9 @@ export default function Home() {
         cuota = rprestamo * factor_cuota;
         console.log("1 " + cuota);
       } else {
-        if (moment(fechas[j], 'YYYY/MM/DD').month() == 6 || moment(fechas[j], 'YYYY/MM/DD').month() == 11) {
+        if (moment(fechas[j], 'YYYY-MM-DD').month() == 6 || moment(fechas[j], 'YYYY-MM-DD').month() == 11) {
           factor_actualizacion = (parseFloat(factor_actualizacion_primero / (1 + tem)));
-          factor_actualizacion_especial = parseFloat((factor_actualizacion_primero / (1 + tem)) * 2);
+          const factor_actualizacion_especial = parseFloat((factor_actualizacion_primero / (1 + tem)) * 2);
           suma_especiales = suma_especiales + factor_actualizacion_especial;
           console.log("2" + cuota);
         } else {
@@ -177,45 +173,40 @@ export default function Home() {
         cuota_especial = (rprestamo * factor_cuota) * 2;
         console.log("4 " + cuota);
       }
-  
-      // Calcular "Capital pendiente", "Amortización", "Pago de intereses"
-      if (rtipocuota != 'Simple') {
-        if (moment(fechas[j], 'YYYY/MM/DD').month() == 6 || moment(fechas[j], 'YYYY/MM/DD').month() == 11) {
-          interes = parseFloat(saldo * tem);
-          amort = parseFloat((cuota_especial) - interes);
-          saldo = parseFloat(saldo - amort);
-          console.log("1" + saldo);
-          
-          amort_acum = parseFloat(amort + amort_acum);
+    }
+    for(var k = 0; k<fechas.length; k++){
+       if (rtipocuota = 'Doble') {
+         if (moment(fechas[k], 'YYYY-MM-DD').month() == 6 || moment(fechas[k], 'YYYY-MM-DD').month() == 11) {
+           interes = parseFloat(saldo * tem);
+           amort = parseFloat((cuota_especial) - interes);
+           saldo = parseFloat(saldo - amort);
+           console.log("1 " + saldo);
+           amort_acum = parseFloat(amort + amort_acum);           
         } else {
-          interes = parseFloat(saldo * tem);
-          amort = parseFloat(cuota - interes);
-          saldo = parseFloat(saldo - amort);
-          amort_acum = parseFloat(amort + amort_acum);
-          console.log("2" + saldo);
-        }
-      } else {
-        interes = parseFloat(saldo * tem);
-        amort = parseFloat(cuota - interes);
-        saldo = parseFloat(saldo - amort);
-        amort_acum = parseFloat(amort + amort_acum);
-        console.log("3" + saldo);
-      }
-  
-      // Almacenar los resultados para cada cuota
+           interes = parseFloat(saldo * tem);
+           amort = parseFloat(cuota - interes);
+           saldo = parseFloat(saldo - amort);
+           amort_acum = parseFloat(amort + amort_acum);
+           console.log("2 " + saldo);
+         }
+       } else {
+         interes = parseFloat(saldo * tem);
+         amort = parseFloat(cuota - interes);
+         saldo = parseFloat(saldo - amort);
+         amort_acum = parseFloat(amort + amort_acum);
+         console.log("3 " + saldo);
+       }
+
+       // Almacenar los resultados para cada cuota
       cuotasData.push({
-        periodo: j + 1,
-        fechaVencimiento: fechas[j],
+        periodo: k + 1,
+        fechaVencimiento: fechas[k],
         capitalPendiente: saldo.toFixed(2),
         amortizacion: amort.toFixed(2),
         pagoIntereses: interes.toFixed(2),
         cuotaMensual: cuota.toFixed(2),
       });
-
-      console.log(cuotasData[j]);
-      
-    }
-  
+      }  
     // Guardar los resultados en el estado
     setFechasCuotas(cuotasData);
   }
@@ -229,9 +220,10 @@ export default function Home() {
         minHeight: "100vh",
       }}
     >
-      <h1 style={{ textAlign: "center", color: "white" }}>
+      <h1 style={{ textAlign: "center", color: "white", padding: '50px' }}>
         Ingresa los datos correspondientes
       </h1>
+      <p> </p>
 
       <form
         onSubmit={handleCalcularClick}
@@ -427,6 +419,7 @@ export default function Home() {
                   <td style={cellStyle}>{cuotaData.amortizacion}</td>
                   <td style={cellStyle}>{cuotaData.pagoIntereses}</td>
                   <td style={cellStyle}>{cuotaData.cuotaMensual}</td>
+                  
                 </tr>
               ))}
             </tbody>
