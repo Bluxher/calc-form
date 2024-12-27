@@ -175,26 +175,27 @@ export default function Home() {
       }
     }
     for(var k = 0; k<fechas.length; k++){
-       if (rtipocuota = 'Doble') {
+       if (rtipocuota != 'Simple') {
          if (moment(fechas[k], 'YYYY-MM-DD').month() == 6 || moment(fechas[k], 'YYYY-MM-DD').month() == 11) {
            interes = parseFloat(saldo * tem);
            amort = parseFloat((cuota_especial) - interes);
            saldo = parseFloat(saldo - amort);
-           console.log("1 " + saldo);
+           console.log("1 " + amort);
+           cuota = interes + amort;
            amort_acum = parseFloat(amort + amort_acum);           
         } else {
            interes = parseFloat(saldo * tem);
            amort = parseFloat(cuota - interes);
            saldo = parseFloat(saldo - amort);
            amort_acum = parseFloat(amort + amort_acum);
-           console.log("2 " + saldo);
+           console.log("2 " + amort);
          }
        } else {
          interes = parseFloat(saldo * tem);
          amort = parseFloat(cuota - interes);
          saldo = parseFloat(saldo - amort);
          amort_acum = parseFloat(amort + amort_acum);
-         console.log("3 " + saldo);
+         console.log("3 " + amort);
        }
 
        // Almacenar los resultados para cada cuota
