@@ -3,6 +3,7 @@ import { useState } from "react";
 import moment from "moment";
 export default function Home() {
   const [tipoCuota, setTipoCuota] = useState('Simple');
+  const [inputType,setInpuType] = useState("%");
   const [valorDpto, setValorDpto] = useState("");
   const [cuotaInicial, setCuotaInicial] = useState("");
   const [prestamo, setPrestamo] = useState("");
@@ -32,6 +33,9 @@ export default function Home() {
   const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
   const anio = fechaActual.getFullYear();
 
+  const handleInputTypeChange = (type) => {
+    setInpuType(type);
+  };
   const handleValorDptoChange = (e) => {
     const value = e.target.value;
     setValorDpto(value);
@@ -45,8 +49,14 @@ export default function Home() {
   const actualizarPrestamo = (valor, cuota) => {
     const valorNumerico = parseFloat(valor) || 0;
     const cuotaNumerica = parseFloat(cuota) || 0;
-    const prestamoCalculado = valorNumerico - (valorNumerico * cuotaNumerica) / 100;
-    setPrestamo(prestamoCalculado.toFixed(2));
+    const prestamoCalculadoPorcentaje = valorNumerico - (valorNumerico * cuotaNumerica) / 100;
+    const prestamoCalculadoSoles = valorNumerico - cuotaNumerica;
+    if(inputType == "%"){
+    setPrestamo(prestamoCalculadoPorcentaje.toFixed(2));
+    }else
+    {
+    setPrestamo(prestamoCalculadoSoles.toFixed(2));
+    }
   };
   const handleAniosPagarChange = (e) => {
     const value = e.target.value;
@@ -79,7 +89,7 @@ export default function Home() {
     }
     setFechasCuotas(fechas);
   };
-
+  
   const handleCalcularClick = (e) => {
     e.preventDefault();
     setDatosCuadro({
@@ -98,11 +108,18 @@ export default function Home() {
     llenardatos();
   };
 
+  function handleFormSubmit(event){
+    event.preventDefault();
+    handleCalcularClick(event);
+    generateGrid();
+  }
+
   const cellStyle = {
     border: "1px solid black",
     padding: "10px",
   };
 
+  //---------------------------------FORMULAS---------------------------------------//
   function llenardatos() {
     var rprecio = parseFloat(valorDpto);
     var rinicial = parseFloat(cuotaInicial);
@@ -181,7 +198,6 @@ export default function Home() {
            amort = parseFloat((cuota_especial) - interes);
            saldo = parseFloat(saldo - amort);
            console.log("1 " + amort);
-           cuota = interes + amort;
            amort_acum = parseFloat(amort + amort_acum);           
         } else {
            interes = parseFloat(saldo * tem);
@@ -211,7 +227,8 @@ export default function Home() {
     // Guardar los resultados en el estado
     setFechasCuotas(cuotasData);
   }
-  //---------------------------------FORMULAS---------------------------------------//
+
+
   return (
     <div
       style={{
@@ -224,10 +241,8 @@ export default function Home() {
       <h1 style={{ textAlign: "center", color: "white", padding: '50px' }}>
         Ingresa los datos correspondientes
       </h1>
-      <p> </p>
-
       <form
-        onSubmit={handleCalcularClick}
+      onSubmit={handleFormSubmit}
         style={{
           backgroundColor: "#f8f5e5",
           padding: "20px",
@@ -250,18 +265,47 @@ export default function Home() {
           />
         </div>
         <div style={{ marginBottom: "15px" }}>
-          <label>Cuota inicial</label>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <input
-              type="number"
-              value={cuotaInicial}
-              onChange={handleCuotaInicialChange}
-              placeholder="%"
-              style={{ flex: 1, padding: "10px", borderRadius: "4px" }}
-            />
-            <span style={{ marginLeft: "5px" }}>%</span>
+            <label>Cuota inicial</label>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <input
+                type="number"
+                value={cuotaInicial}
+                onChange={handleCuotaInicialChange}
+                placeholder={inputType === "%" ? "%" : "S/"}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  borderRadius: "4px",
+                  marginRight: "10px",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => handleInputTypeChange("%")}
+                style={{
+                  padding: "10px",
+                  borderRadius: "4px",
+                  backgroundColor: inputType === "%" ? "#007bff" : "#ccc",
+                  color: inputType === "%" ? "white" : "black",
+                  marginRight: "5px",
+                }}
+              >
+                %
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInputTypeChange("S/")}
+                style={{
+                  padding: "10px",
+                  borderRadius: "4px",
+                  backgroundColor: inputType === "S/" ? "#007bff" : "#ccc",
+                  color: inputType === "S/" ? "white" : "black",
+                }}
+              >
+                S/
+              </button>
+            </div>
           </div>
-        </div>
         <div style={{ marginBottom: "15px" }}>
           <label>Préstamo</label>
           <input
@@ -283,7 +327,7 @@ export default function Home() {
           />
         </div>
         <div className="cuota-container">
-          <label className="label-titulo">tipo de cuota</label>
+          <label className="label-titulo">Tipo de cuota</label>
           <div className="opciones">
             <label className="opcion-radio">
               <input
@@ -333,7 +377,7 @@ export default function Home() {
           </div>
         </div>
         <button
-          type="submit"
+          type="submit" 
           style={{
             width: "100%",
             backgroundColor: "#49667a",
@@ -382,21 +426,6 @@ export default function Home() {
       </div>
 
       <div>
-        <button
-          onClick={generateGrid}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "black",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
-        >
-          Expandir
-        </button>
-
         {showGrid && (
           <table 
           style={{ 
