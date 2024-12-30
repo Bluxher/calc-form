@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import moment from "moment";
+import Link from 'next/link';
 export default function Home() {
   const [tipoCuota, setTipoCuota] = useState('Simple');
   const [inputType,setInpuType] = useState("%");
@@ -28,6 +29,8 @@ export default function Home() {
     "PAGO DE INTERESES",
     "CUOTA MENSUAL",
   ];
+  const [inputValue, setInputValue] = useState("");
+  
   const fechaActual = new Date();
   const dia = String(fechaActual.getDate()).padStart(2, "0");
   const mes = String(fechaActual.getMonth() + 1).padStart(2, "0");
@@ -35,7 +38,9 @@ export default function Home() {
 
   const handleInputTypeChange = (type) => {
     setInpuType(type);
+    setCuotaInicial("");
   };
+
   const handleValorDptoChange = (e) => {
     const value = e.target.value;
     setValorDpto(value);
@@ -210,6 +215,7 @@ export default function Home() {
          interes = parseFloat(saldo * tem);
          amort = parseFloat(cuota - interes);
          saldo = parseFloat(saldo - amort);
+
          amort_acum = parseFloat(amort + amort_acum);
          console.log("3 " + amort);
        }
@@ -228,7 +234,11 @@ export default function Home() {
     setFechasCuotas(cuotasData);
   }
 
-
+//--------------------------------MODAL-------------------------------------//
+  const [isModalActive, setModalStatus] = useState(false);
+  
+  const openModal = () => setModalStatus(true);
+  const closeModal = () => setModalStatus(false);
   return (
     <div
       style={{
@@ -390,6 +400,69 @@ export default function Home() {
         >
           CALCULAR
         </button>
+        <a 
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            openModal();
+          }}
+          style={{
+            color: "blue",
+            padding: "10px",
+            textDecoration: "underline",
+            cursor: "pointer",
+            display: "inline-block",
+          }}
+          >
+            Mas Informacion
+        </a>
+        <p> =D <Link href= "/about">aqui</Link></p>
+        <p> =D <Link href= "/otrama">aqui</Link></p>
+        
+        {isModalActive && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 9999,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#f0f0f0",
+                padding: "20px",
+                borderRadius: "10px",
+                textAlign: "center",
+                width: "600px",
+                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+              <button
+                onClick={closeModal}
+                style={{
+                  marginTop: "20px",
+                  padding: "10px 20px",
+                  backgroundColor: "#ff5756",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                }}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        )}
       </form>
 
       <div
@@ -448,7 +521,7 @@ export default function Home() {
                   <td style={cellStyle}>{cuotaData.capitalPendiente}</td>
                   <td style={cellStyle}>{cuotaData.amortizacion}</td>
                   <td style={cellStyle}>{cuotaData.pagoIntereses}</td>
-                  <td style={cellStyle}>{cuotaData.cuotaMensual}</td>
+                  <td style={cellStyle}>{(parseFloat(cuotaData.amortizacion) + parseFloat(cuotaData.pagoIntereses)).toFixed(2)}</td>
                   
                 </tr>
               ))}

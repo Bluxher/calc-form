@@ -35,6 +35,14 @@ a {
   text-decoration: none;
 }
 
+a:hover{
+  color: white;
+}
+
+a:visited{
+  color: purple;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
